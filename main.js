@@ -6,33 +6,33 @@
 // якщо імайли закінчуються на ukr.net то всі записи записуємо в ukr.net.txt
 // і так далі
 
-const path = require('node:path'); // path to build correct path for files,directories
-const fs = require('node:fs'); //fs to create and append files, directories
-const afs = require('node:fs/promises');// async fs to not blocking i/o, write safer code
-const readLine = require('node:readline/promises');// rl to read the code
+const afs = require('node:fs/promises');
+const fs = require('node:fs');
+const path = require('node:path');
+const readLine = require('node:readline/promises');
 
 const start = async () => {
-    const sourceFilePath = path.join(process.cwd(), 'emails.txt');//source
-    // const targetFilePath = path.join(process.cwd(), 'gmail.txt');//target 1task
-    const fileStream = fs.createReadStream(sourceFilePath, 'utf8');//read from
-    const rl = readLine.createInterface({input: fileStream});//read by line
+    const sourceFilePath = path.join(process.cwd(), 'emails.txt');
+    // const targetFilePath = path.join(process.cwd(), 'gmails.txt');
+    const fileStream = fs.createReadStream(sourceFilePath, { encoding: 'utf8' });
+    const rl = readLine.createInterface({input: fileStream});
 
     try {
-        await afs.mkdir(`emails`, {recursive: true}); //creating directory for them
+        await afs.mkdir('emails', { recursive: true });
         for await (const line of rl) {
-            const email = line.split('\t').at(-1);// no more hash in this variable
-            const splitEmail = email.split('@'); //split login and domain
+            const email = line.split('\t').at(-1);
+            const splitEmail = line.split('@');
 
-            if (splitEmail.length !== 2) continue;
+            if ( splitEmail.length !== 2 ) continue;
 
-            const domainName = splitEmail.at(-1); // take domain name
+            const domainName = splitEmail.at(-1);
 
-            // if (domainName === 'gmail.com') { // 1 task
+            // if (domainName === 'gmail.com') {
             //     await afs.appendFile(targetFilePath, `${email}\n`)
             // }
 
-            const targetFileName = domainName + '.txt'; // making a name for creating a file for each email
-            await afs.appendFile(`emails/${targetFileName}`, `${email}\n`);//append files + data
+            const targetFileName = domainName + '.txt';
+            await afs.appendFile(`emails/${targetFileName}`, `${email}\n`)
         }
 
     } finally {
