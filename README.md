@@ -13,3 +13,17 @@ repository to create a user and returns the created entity, getById: pass the id
 
 5: main.js : Post: take user client created, send it to the service, await, get created user back to client.  Get: get
 array of users or [], getById: get the id from params, pass it to service, wait for response
+
+hw2: 
+
+1: repository:
+updateById: read db, compare ids with one we got from client, keep his id, founded users update in array from db, await write (send the updated array into db), return user.
+deleteById: read db, compare ids, splice user by index (only one), await write to db updated array.
+
+2: user.service:
+updateById: pass the id and user into repository
+deleteById: pass id into repository
+
+3: main.js
+app.put: take user from req.body, id from req.params, pass user,id to user.service, await, get the updated user, response json data
+app.delete: take id from params, put id to user service, res.end
