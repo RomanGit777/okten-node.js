@@ -9,8 +9,14 @@ class UserService {
     async getById(id){
         return await userRepository.getById(id);//get founded user
     }
+    async updateById(id,user) {
+        return await userRepository.updateById(id,user);//pass data, get new user
+    }
+    async deleteById(id) {
+        return await userRepository.deleteById(id);//pass data
+    }
 }
-const userService = new UserService();//why do we need to do add "new" here and in repository?
+const userService = new UserService();
 module.exports = {
     userService
 };

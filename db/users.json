@@ -7,26 +7,14 @@
   },
   {
     "id": 2,
-    "name": "Kokos",
-    "surname": "Koko",
-    "age": "2"
+    "name": "KokoroKo",
+    "surname": "KokoroRoKO",
+    "age": "222"
   },
   {
     "id": 3,
     "name": "Kokos",
     "surname": "Kokosovich",
-    "age": "5"
-  },
-  {
-    "id": 4,
-    "name": "Igor",
-    "surname": "Kokosovich",
-    "age": "9"
-  },
-  {
-    "id": 5,
-    "name": "Petya",
-    "surname": "Kok",
-    "age": "11"
+    "age": "6"
   }
 ]
