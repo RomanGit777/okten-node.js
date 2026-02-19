@@ -1,22 +1,23 @@
 const {userRepository} = require('../repositories/user.repository');
 class UserService {
-    async getAll(){
-        return await userRepository.getAll();//get result of read in services
+    async getAll() {
+        return await userRepository.getAll();
     }
     async create(user) {
-        return await userRepository.create(user);//get created user
+        return await userRepository.create(user);
     }
-    async getById(id){
-        return await userRepository.getById(id);//get founded user
+    async getById(id) {
+        return await userRepository.getById(id);
     }
-    async updateById(id,user) {
-        return await userRepository.updateById(id,user);//pass data, get new user
+    async updateById(id, user) {
+        return await userRepository.updateById(id, user);
     }
     async deleteById(id) {
-        return await userRepository.deleteById(id);//pass data
+        return await userRepository.deleteById(id);
     }
 }
+
 const userService = new UserService();
 module.exports = {
     userService
-};
+}
