@@ -1,4 +1,4 @@
-export interface IUser {
+export interface IUser { // represents DB document, responses to user
     _id: string,
     name: string,
     surname: string,
@@ -7,4 +7,4 @@ export interface IUser {
     updatedAt: Date
 }
 
-export type IUserDTO = Pick<IUser, "name" | "surname" | "age">// DTO - data transfer object
+export type IUserDTO = Pick<IUser, "name" | "surname" | "age">// create,update,delete
