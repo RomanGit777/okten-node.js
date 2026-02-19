@@ -24,4 +24,4 @@ Lesson 3:
 
 11. controllers : user.controller.ts : methods for router
 
-12. enums : status-codes.enum.ts 
+12. enums : status-codes.enum.ts
