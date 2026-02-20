@@ -1,6 +1,6 @@
 
 Lesson 3:
-1. install dependencies, devdependencies, scripts
+1. install dependencies, devdependencies, scripts, tsconfig
 2. src: source file. create. 
 
 3. interfaces : user.interface.ts : {
@@ -18,14 +18,12 @@ Controller → handles HTTP
 Service → handles logic / rules
 Repository → handles DB
 
-7. .env : port + mongouri  
+7. routers : api.router : is a main router, define path + who will answer, user.router : using methods from controller
 
-8. config.ts : import of port & mongouri
+8. controllers : user.controller.ts : methods for router
+9. enums : status-codes.enum.ts
 
-9. main.js : connection to db
+10. env : port + mongouri  
+11. config.ts : import of port & mongouri
 
-10. routers : api.router : is a main router, define path + who will answer, user.router : using methods from controller
-
-11. controllers : user.controller.ts : methods for router
-
-12. enums : status-codes.enum.ts
+12. main.ts : connection to db
