@@ -1,5 +1,5 @@
-import {IUser, IUserDTO} from "../interfaces/user.interface";
-import {userRepository} from "../repositories/user.repository";
+import { IUser, IUserDTO } from "../interfaces/user.interface";
+import { userRepository } from "../repositories/user.repository";
 
 class UserService {
     public getAll(): Promise<IUser[]> {
