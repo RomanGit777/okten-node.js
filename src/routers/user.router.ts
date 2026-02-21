@@ -14,10 +14,23 @@ router.post(
     usersController.create,
 );
 
-router.get("/:id", usersController.getById);
+router.get(
+    "/:id",
+    commonMiddleware.isIdValidate("id"),
+    usersController.getById,
+);
 
-router.put("/:id", usersController.updateById);
+router.put(
+    "/:id",
+    commonMiddleware.isIdValidate("id"),
+    commonMiddleware.validateBody(UserValidator.update),
+    usersController.updateById,
+);
 
-router.delete("/:id", usersController.deleteById);
+router.delete(
+    "/:id",
+    commonMiddleware.isIdValidate("id"),
+    usersController.deleteById,
+);
 
 export const userRouter = router;

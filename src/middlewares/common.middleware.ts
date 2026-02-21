@@ -10,7 +10,7 @@ class CommonMiddleware {
             try {
                 const { id } = req.params;
                 if (!isObjectIdOrHexString(id)) {
-                    throw new ApiError(`Invalid id [${key}]`, 400);
+                    throw new ApiError(`${key} ${id} invalid `, 400);
                 }
                 next();
             } catch (e) {
