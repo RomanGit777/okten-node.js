@@ -21,7 +21,7 @@ app.use(
     },
 );
 process.on("uncaughtException", (err) => {
-    console.log("uncaughtException", err);
+    console.error("Uncaught Exception", err);
     process.exit(1);
 });
 const dbConnection = async () => {

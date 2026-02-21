@@ -5,12 +5,12 @@ import { isObjectIdOrHexString } from "mongoose";
 import { ApiError } from "../errors/api.error";
 
 class CommonMiddleware {
-    public isIdValidate(key: string) {
+    public IsIdValidate(key: string) {
         return (req: Request, res: Response, next: NextFunction) => {
             try {
-                const { id } = req.params;
+                const id = req.params.id;
                 if (!isObjectIdOrHexString(id)) {
-                    throw new ApiError(`${key} ${id} invalid `, 400);
+                    throw new ApiError(`${key} ${id} invalid`, 400);
                 }
                 next();
             } catch (e) {
@@ -19,7 +19,7 @@ class CommonMiddleware {
         };
     }
 
-    public validateBody(validator: ObjectSchema) {
+    public ValidateBody(validator: ObjectSchema) {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 req.body = await validator.validateAsync(req.body);
@@ -30,5 +30,4 @@ class CommonMiddleware {
         };
     }
 }
-
 export const commonMiddleware = new CommonMiddleware();
