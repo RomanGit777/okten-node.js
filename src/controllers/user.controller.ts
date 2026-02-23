@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { StatusCodesEnum } from "../enums/status-codes.enums";
-import { IUserDTO } from "../interfaces/user.interface";
+import { IUserCreateDTO, IUserUpdateDTO } from "../interfaces/user.interface";
 import { userService } from "../services/user.service";
 
 class UsersController {
@@ -11,28 +11,40 @@ class UsersController {
     }
     public async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const user = req.body as IUserDTO;
+            const user = req.body as IUserCreateDTO;
             const data = await userService.create(user);
             res.status(StatusCodesEnum.CREATED).json(data);
         } catch (e) {
             next(e);
         }
     }
-    public async getById(req: Request, res: Response) {
-        const id = req.params.id as string;
-        const data = await userService.getById(id);
-        res.status(StatusCodesEnum.OK).json(data);
+    public async getById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id as string;
+            const data = await userService.getById(id);
+            res.status(StatusCodesEnum.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
-    public async updateById(req: Request, res: Response) {
-        const user = req.body as IUserDTO;
-        const id = req.params.id as string;
-        const data = await userService.updateById(id, user);
-        res.status(StatusCodesEnum.CREATED).json(data);
+    public async updateById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const user = req.body as IUserUpdateDTO;
+            const id = req.params.id as string;
+            const data = await userService.updateById(id, user);
+            res.status(StatusCodesEnum.CREATED).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
-    public async deleteById(req: Request, res: Response) {
-        const id = req.params.id as string;
-        await userService.deleteById(id);
-        res.status(StatusCodesEnum.NO_CONTENT).end();
+    public async deleteById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id as string;
+            await userService.deleteById(id);
+            res.status(StatusCodesEnum.NO_CONTENT).end();
+        } catch (e) {
+            next(e);
+        }
     }
 }
 
