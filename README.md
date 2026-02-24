@@ -1,3 +1,8 @@
+So far we did make it possible for users 
+1. to sign up, sign in, get, create, update, delete for all users, and block/unblock for admin
+2. We validate requests using middlewares
+3. Read/write data to/from DB with flow like: Main>Main API>API router>(middleware)>Controller>Service>Repository>DB
+
 L5:
 1. Preparing user model for authentication + authorization{
     1. dependencies : bcrypt, jsonwebtoken + types for them in package.json. 
