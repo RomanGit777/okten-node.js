@@ -30,4 +30,17 @@ router.delete(
     usersController.deleteById,
 );
 
+router.patch(
+    "/:id/block",
+    authMiddleware.checkAccessToken,
+    authMiddleware.isAdmin,
+    usersController.blockUser,
+);
+
+router.patch(
+    "/:id/unblock",
+    authMiddleware.checkAccessToken,
+    authMiddleware.isAdmin,
+    usersController.unBlockUser,
+);
 export const userRouter = router;

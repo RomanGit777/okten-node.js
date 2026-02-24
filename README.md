@@ -63,3 +63,25 @@ L5:
 
 7. validators : auth.validator.ts : validate refresh
    add this to auth router
+
+
+hw 5: 
+1. add to user model new field isActiive true by default, add to interface
+
+2. change in db
+
+3. auth middleware: isAdmin : checks from locals tokenPayload role of the user, error if not
+
+4. user service : isActive : find user by id get his "isActive" field
+
+5. auth middleware : into ckechAccessToken add : after token validation = isActive validation. if return false throw error + forbidden.
+
+6. auth service: after password validation throw new Error if user is not active: if account is not active, block sign in
+
+7. user repository : blockUser, unBlockUser : return findByIdAndUpdate (id, {isActive}, {new:true} : new methods from db
+
+8. user service: blockUser, unBlockUser : return userRepository, pass id
+
+9. user controller : add block&unblock : check if id's not my, return value from service
+
+10. user router : /:id/block&unblock check token, isAdmin, then call controller 

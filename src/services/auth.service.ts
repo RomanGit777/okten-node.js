@@ -13,7 +13,7 @@ class AuthService {
     public async signUp(
         user: IUserCreateDTO,
     ): Promise<{ user: IUser; tokens: ITokenPair }> {
-        await userRepository.getByEmail(user.email);
+        await userService.isEmailUnique(user.email);
         const password = await passwordService.hashedPassword(user.password);
         const newUser = await userService.create({ ...user, password });
         const tokens = tokenService.generateTokens({
@@ -40,6 +40,12 @@ class AuthService {
             user.password,
         );
 
+        if (!user.isActive) {
+            throw new ApiError(
+                "Account is not active",
+                StatusCodesEnum.FORBIDDEN,
+            );
+        }
         if (!isValidPassword) {
             throw new ApiError(
                 "Invalid email or password",
