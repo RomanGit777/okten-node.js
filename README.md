@@ -44,3 +44,22 @@ L5:
 
    9. create postman collection + base url
 }
+      L5,2:
+
+1. create auth.middleware : checkAccessToken : get the token itself, decode userinfo from there, store it in req.res.locals so that authorization logic knows who the user is, without re-verifying the token again.
+   (add new method in TokenService : isTokenExists : Promise<boolean> : receive token, decide which db field to 
+   check (access/refhresh) query DB, true if found, false otherwise.)
+
+2. remove create for user from user.router + remove create from user.controller
+   user.router : add middleware checkAccessToken for put & delete, use signUp to create (auth service)
+
+3. auth controller : add new method : me : return the user that logged in, by id. add new route /me. Think of /me as “load my profile”.
+
+4. auth middleware : new method : checkRefreshToken
+
+5. auth controller : add new method : refresh
+
+6. auth router : new endpoint : refresh
+
+7. validators : auth.validator.ts : validate refresh
+   add this to auth router

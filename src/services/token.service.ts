@@ -4,6 +4,7 @@ import { config } from "../configs/config";
 import { StatusCodesEnum } from "../enums/status-codes.enums";
 import { ApiError } from "../errors/api.error";
 import { ITokenPair, ITokenPayload } from "../interfaces/token.interface";
+import { tokenRepository } from "../repositories/token.repository";
 
 class TokenService {
     // generate jwt tokens
@@ -39,11 +40,24 @@ class TokenService {
                         StatusCodesEnum.BED_REQUEST,
                     );
             }
-            return jwt.verify(token, secret) as ITokenPayload; // why as ITokenPayload?
+            return jwt.verify(token, secret) as ITokenPayload;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
             throw new ApiError("Invalid token", StatusCodesEnum.UNAUTHORIZED);
         }
+    }
+    // 1️⃣ Receive token string
+    // 2️⃣ Decide which DB field to check (accessToken or refreshToken)
+    // 3️⃣ Query DB
+    // 4️⃣ Return true if found, false otherwise
+    public async isTokenExists(
+        token: string,
+        type: "accessToken" | "refreshToken",
+    ): Promise<boolean> {
+        const ITokenPromise = await tokenRepository.findByParams({
+            [type]: token,
+        });
+        return !!ITokenPromise;
     }
 }
 export const tokenService = new TokenService();

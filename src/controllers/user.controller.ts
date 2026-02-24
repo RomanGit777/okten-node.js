@@ -1,19 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 
 import { StatusCodesEnum } from "../enums/status-codes.enums";
-import { IUserCreateDTO, IUserUpdateDTO } from "../interfaces/user.interface";
+import { IUserUpdateDTO } from "../interfaces/user.interface";
 import { userService } from "../services/user.service";
 
 class UsersController {
-    public async getAll(req: Request, res: Response) {
-        const data = await userService.getAll();
-        res.status(StatusCodesEnum.OK).json(data);
-    }
-    public async create(req: Request, res: Response, next: NextFunction) {
+    public async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            const user = req.body as IUserCreateDTO;
-            const data = await userService.create(user);
-            res.status(StatusCodesEnum.CREATED).json(data);
+            const data = await userService.getAll();
+            res.status(StatusCodesEnum.OK).json(data);
         } catch (e) {
             next(e);
         }
@@ -32,7 +27,7 @@ class UsersController {
             const user = req.body as IUserUpdateDTO;
             const id = req.params.id as string;
             const data = await userService.updateById(id, user);
-            res.status(StatusCodesEnum.CREATED).json(data);
+            res.status(StatusCodesEnum.OK).json(data);
         } catch (e) {
             next(e);
         }

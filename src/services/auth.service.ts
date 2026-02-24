@@ -1,5 +1,6 @@
 import { StatusCodesEnum } from "../enums/status-codes.enums";
 import { ApiError } from "../errors/api.error";
+import { IAuth } from "../interfaces/auth.interface";
 import { ITokenPair } from "../interfaces/token.interface";
 import { IUser, IUserCreateDTO } from "../interfaces/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
@@ -23,7 +24,7 @@ class AuthService {
         return { user: newUser, tokens };
     }
     public async signIn(
-        dto: any,
+        dto: IAuth,
     ): Promise<{ user: IUser; tokens: ITokenPair }> {
         const user = await userRepository.getByEmail(dto.email);
 
@@ -50,6 +51,7 @@ class AuthService {
             userId: user._id,
             role: user.role,
         });
+        await tokenRepository.create({ ...tokens, _userId: user._id });
         return {
             user,
             tokens,
