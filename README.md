@@ -2,6 +2,7 @@ So far we did make it possible for users
 1. to sign up, sign in, get, create, update, delete for all users, and block/unblock for admin
 2. We validate requests using middlewares
 3. Read/write data to/from DB with flow like: Main>Main API>API router>(middleware)>Controller>Service>Repository>DB
+4. Get welcome email after sign up 
 
 L5:
 1. Preparing user model for authentication + authorization{
@@ -90,3 +91,23 @@ hw 5:
 9. user controller : add block&unblock : check if id's not my, return value from service
 
 10. user router : /:id/block&unblock check token, isAdmin, then call controller 
+
+
+LS 6:
+L6:
+1. package.json add dependencies
+
+2. create google password in password apps
+
+3..env : add email_user, email_password
+add it to configs, type as string
+
+4. create : email.service 
+
+5. add emailService into sign up
+
+6. create directory : templates > base.hbs , welcome hbs
+
+7. create renderTemplate func
+
+8. create constants directory : templates.constants 
