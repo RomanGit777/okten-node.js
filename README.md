@@ -3,111 +3,68 @@ So far we did make it possible for users
 2. We validate requests using middlewares
 3. Read/write data to/from DB with flow like: Main>Main API>API router>(middleware)>Controller>Service>Repository>DB
 4. Get welcome email after sign up 
+5. Reset password, log in after verifying account 
 
-L5:
-1. Preparing user model for authentication + authorization{
-    1. dependencies : bcrypt, jsonwebtoken + types for them in package.json. 
+Hw 6:
 
-    2. add email, password, role, isDeleted, isVerified to userSchema. Because from now user will have opportunity to 
-   log in and sign up
+task 1 flow:
+1. change isActive state to false by default
+2. create new method for sendEmail (activate)+template
+3. add new action tokens
+4. add new route for activate methods
 
-    3. create a role.enums.ts. That we can define who's logged in/signed up and what he can do 
-
-   4. change interface: 1.separate updatedAt, createdAt => IBase 2.extend IUser from IBase, add new lines from model,
-      3.extend IUserCreatDTO+Update, hold them separate
-}
-
-2. Authentication infrastructure{
-   1. create token interface
-
-   2. create token model
-
-   3. password service : get and hash password, compare password with existing hash.
-
-   4. env: add secrets : access,refresh,lifetime for both.
-   
-   5. token service : class TokenService: generate tokens, verify tokens + decode user data from it
-
-   6. config : add new secrets from .env to export it to TokenService + create a interface for it.
-}
-3. Authentication & user flow implementation{
-   1. user.repository : add getByEmail
-
-   2. user.service : check is email unique? add if to check user existence
-
-   3. create token repository : create, findByParams
-
-   4. create auth service : login, sign in
-
-   5. create auth.controller : get result of auth service, return it
-
-   6. create auth.router :  validate data, call controller
-       (create regexp enum for password,name, add it to validator)
-
-   7. api.router : add auth route
-   
-   8. connect to db
-
-   9. create postman collection + base url
-}
-      L5,2:
-
-1. create auth.middleware : checkAccessToken : get the token itself, decode userinfo from there, store it in req.res.locals so that authorization logic knows who the user is, without re-verifying the token again.
-   (add new method in TokenService : isTokenExists : Promise<boolean> : receive token, decide which db field to 
-   check (access/refhresh) query DB, true if found, false otherwise.)
-
-2. remove create for user from user.router + remove create from user.controller
-   user.router : add middleware checkAccessToken for put & delete, use signUp to create (auth service)
-
-3. auth controller : add new method : me : return the user that logged in, by id. add new route /me. Think of /me as “load my profile”.
-
-4. auth middleware : new method : checkRefreshToken
-
-5. auth controller : add new method : refresh
-
-6. auth router : new endpoint : refresh
-
-7. validators : auth.validator.ts : validate refresh
-   add this to auth router
+task 1:
+1. user.model change isActive to false by default
+2. constants: change email constants file
+   enums : create email.enum file
+   update email service + auth service
+3. templates : create activate.hbs : (email for activate account)
+4. .env : add new tokens & url, add it to config
+5. enums: create : token-type.enum
+6. enums: action-token-type.enum
+7. token.service : change, create new method : generateActionToken
+8. enums: add activate method
+9. auth.service: change to ACTIVATE, add url + token, generate action token
+10. auth controller : add activate method : catch token from params, pass it to the authS.activate.
+11. auth.service : add activate method : to verify token we get, get userId from there and pass it to update isActive state in user.
+12. auth.router: add new route
 
 
-hw 5: 
-1. add to user model new field isActiive true by default, add to interface
+task 2 flow:
+1. create new reset password endpoint, user sends request to
+2. server checks is this email exists in db, if it is, it creates new token, and sends to the email he wrote from
+3. client got this email with token, do new request on server with new password in req.body
+4. server checks token, if it's valid, validate password, if everything fine, response 201, user
+5. User can log in with reseted password
 
-2. change in db
+task 2 part 1: send email with link where is token:
+1: enums: add recovery, add it to email.constants
 
-3. auth middleware: isAdmin : checks from locals tokenPayload role of the user, error if not
+2. templates: create recovery.hbs (email we send on request)
 
-4. user service : isActive : find user by id get his "isActive" field
+3. validators: create recovery validator : to check if email passed and it's a trimmed string
 
-5. auth middleware : into ckechAccessToken add : after token validation = isActive validation. if return false throw error + forbidden.
+4. user.service: getByEmail : to check if email is in db and return a user
 
-6. auth service: after password validation throw new Error if user is not active: if account is not active, block sign in
+5. auth.controller: add passwordRecoveryRequest : to get the email, pass it to check if user with this email exists after get the user in response, if user is pass him to recoveryPasswordRequest (authservice)
 
-7. user repository : blockUser, unBlockUser : return findByIdAndUpdate (id, {isActive}, {new:true} : new methods from db
+6. auth.service: recoveryPasswordRequest : to generate recovery action token and pass it to the url, also to use sendEmail
 
-8. user service: blockUser, unBlockUser : return userRepository, pass id
+task 2 part 2:
 
-9. user controller : add block&unblock : check if id's not my, return value from service
+1. auth.controller: add recoveryPassword
+1. take token from req.params as string
+2. take password from body
+3. await user from recoveryPassword
+4. res ok json user
+   try catch
 
-10. user router : /:id/block&unblock check token, isAdmin, then call controller 
+2. auth.service : recoveryPassword
+1. token,password, Promise:Iuser
+2. verify token = get userid from there
+3. hash password
+4. return await updateById, change password
 
+3. validators: add to auth.validator : validation for password
 
-LS 6:
-L6:
-1. package.json add dependencies
-
-2. create google password in password apps
-
-3..env : add email_user, email_password
-add it to configs, type as string
-
-4. create : email.service 
-
-5. add emailService into sign up
-
-6. create directory : templates > base.hbs , welcome hbs
-
-7. create renderTemplate func
-
-8. create constants directory : templates.constants 
+4. router: add new router post  recovery/:token, validate by password, move to recovery password 

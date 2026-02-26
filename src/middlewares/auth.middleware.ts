@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { RoleEnum } from "../enums/role.enums";
 import { StatusCodesEnum } from "../enums/status-codes.enums";
+import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api.error";
 import { IRefresh, ITokenPayload } from "../interfaces/token.interface";
 import { tokenService } from "../services/token.service";
@@ -31,21 +32,22 @@ class AuthMiddleware {
                     StatusCodesEnum.UNAUTHORIZED,
                 );
             }
+
             const tokenPayload = tokenService.verifyToken(
                 accessToken,
-                "access",
+                TokenTypeEnum.ACCESS,
             );
             const isTokenExists = await tokenService.isTokenExists(
                 accessToken,
-                "accessToken",
+                TokenTypeEnum.ACCESS,
             );
+
             if (!isTokenExists) {
                 throw new ApiError(
                     "Invalid token",
                     StatusCodesEnum.UNAUTHORIZED,
                 );
             }
-
             const isActive = await userService.isActive(tokenPayload.userId);
 
             if (!isActive) {
@@ -56,6 +58,7 @@ class AuthMiddleware {
             }
 
             req.res.locals.tokenPayload = tokenPayload;
+
             next();
         } catch (e) {
             next(e);
@@ -72,22 +75,23 @@ class AuthMiddleware {
 
             if (!refreshToken) {
                 throw new ApiError(
-                    "No token provided",
+                    "No refresh token provided",
                     StatusCodesEnum.FORBIDDEN,
                 );
             }
-
             const tokenPayload = tokenService.verifyToken(
                 refreshToken,
-                "refresh",
+                TokenTypeEnum.REFRESH,
             );
             const isTokenExists = await tokenService.isTokenExists(
                 refreshToken,
-                "refreshToken",
+                TokenTypeEnum.REFRESH,
             );
+
             if (!isTokenExists) {
                 throw new ApiError("Invalid token", StatusCodesEnum.FORBIDDEN);
             }
+
             req.res.locals.tokenPayload = tokenPayload;
 
             next();

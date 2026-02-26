@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
 
 import { config } from "../configs/config";
+import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { StatusCodesEnum } from "../enums/status-codes.enums";
+import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api.error";
 import { ITokenPair, ITokenPayload } from "../interfaces/token.interface";
 import { tokenRepository } from "../repositories/token.repository";
@@ -23,16 +25,23 @@ class TokenService {
     public verifyToken(
         //verify token, decode user data from it
         token: string,
-        type: "access" | "refresh",
+        type: TokenTypeEnum | ActionTokenTypeEnum,
     ): ITokenPayload {
         try {
             let secret: string;
+
             switch (type) {
-                case "access":
+                case TokenTypeEnum.ACCESS:
                     secret = config.JWT_ACCESS_SECRET;
                     break;
-                case "refresh":
+                case TokenTypeEnum.REFRESH:
                     secret = config.JWT_REFRESH_SECRET;
+                    break;
+                case ActionTokenTypeEnum.ACTIVATE:
+                    secret = config.JWT_ACTIVATE_SECRET;
+                    break;
+                case ActionTokenTypeEnum.RECOVERY:
+                    secret = config.JWT_RECOVERY_SECRET;
                     break;
                 default:
                     throw new ApiError(
@@ -41,18 +50,42 @@ class TokenService {
                     );
             }
             return jwt.verify(token, secret) as ITokenPayload;
+
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
             throw new ApiError("Invalid token", StatusCodesEnum.UNAUTHORIZED);
         }
     }
+
+    public generateActionToken(
+        payload: ITokenPayload,
+        type: ActionTokenTypeEnum,
+    ): string {
+        let secret: string;
+        let expiresIn: any;
+
+        switch (type) {
+            case ActionTokenTypeEnum.ACTIVATE:
+                secret = config.JWT_ACTIVATE_SECRET;
+                expiresIn = config.JWT_ACTIVATE_LIFETIME;
+                break;
+            case ActionTokenTypeEnum.RECOVERY:
+                secret = config.JWT_RECOVERY_SECRET;
+                expiresIn = config.JWT_RECOVERY_LIFETIME;
+                break;
+            default:
+                throw new ApiError("Invalid action token type", 400);
+        }
+        return jwt.sign(payload, secret, { expiresIn });
+    }
+
     // 1️⃣ Receive token string
     // 2️⃣ Decide which DB field to check (accessToken or refreshToken)
     // 3️⃣ Query DB
     // 4️⃣ Return true if found, false otherwise
     public async isTokenExists(
         token: string,
-        type: "accessToken" | "refreshToken",
+        type: TokenTypeEnum,
     ): Promise<boolean> {
         const ITokenPromise = await tokenRepository.findByParams({
             [type]: token,
