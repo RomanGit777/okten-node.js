@@ -1,0 +1,57 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_backend
+    ports:
+      - "7000:7000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+    volumes:
+      - ./backend/src:/app/src:ro
+      - /app/dist
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "1"
+
+  db:
+    image: mongo:latest
+    container_name: app_mongodb
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env.db
+    environment:
+      MONGO_INITDB_DATABASE: app
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo.init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 120s
+      timeout: 5s
+      retries: 2
+      start_period: 45s
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
