@@ -1,0 +1,27 @@
+# Development Dockerfile for React frontend
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache curl
+
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+COPY package*.json ./
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+
+COPY public ./public
+COPY src ./src
+
+RUN chown -R nodejs:nodejs /app
+
+USER nodejs
+
+EXPOSE 3000
+
+ENV REACT_APP_API_URL=http://localhost:7000/api
+
+CMD ["npm", "start"]
