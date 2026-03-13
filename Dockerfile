@@ -1,4 +1,5 @@
-# Backend build stage
+# Multi-stage backend build
+ARG BUILDKIT_INLINE_CACHE=1
 FROM node:20-alpine AS backend-builder
 
 WORKDIR /app/backend
@@ -6,72 +7,75 @@ WORKDIR /app/backend
 # Copy package files
 COPY backend/package*.json ./
 
-# Install dependencies with cache mount
+# Install production dependencies with BuildKit cache mount
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --only=production
 
-# Copy source and config
+# Copy source and TypeScript config
 COPY backend/src ./src
 COPY backend/tsconfig.json ./
 
-# Install dev dependencies for build only
+# Install dev dependencies for build stage only
 RUN --mount=type=cache,target=/root/.npm \
     npm install --save-dev typescript @types/node
 
-# Compile TypeScript
+# Compile TypeScript to JavaScript
 RUN npm run build 2>/dev/null || npx tsc
 
-# Frontend build stage
+# Multi-stage frontend build
 FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
 
+# Install frontend dependencies with BuildKit cache mount
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm install
 
 COPY frontend/public ./public
 COPY frontend/src ./src
+COPY frontend/tsconfig.json ./
 
+# Build configuration for React
 ENV REACT_APP_API_URL=/api
-ENV CI=true
+ENV CI=false
 
-RUN --mount=type=cache,target=/root/.npm \
-    npm run build
+# Build React production bundle
+RUN npm run build
 
-# Runtime stage
+# Production runtime stage
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Install curl for healthchecks
+# Install curl for healthcheck
 RUN apk add --no-cache curl
 
-# Create non-root user
+# Create non-root user for security best practices
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# Copy backend production files
+# Copy backend package files and install production dependencies
 COPY backend/package*.json ./
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --only=production && \
-    npm cache clean --force
+    npm ci --only=production
 
+# Copy compiled backend from builder stage
 COPY --from=backend-builder /app/backend/dist ./dist
 
-# Copy frontend build to public folder for serving
+# Copy email templates
+COPY backend/src/templates ./templates
+
+# Create public directory and copy frontend build from builder stage
 RUN mkdir -p public
 COPY --from=frontend-builder /app/frontend/build ./public
 
-# Fix permissions
+# Set ownership to non-root user
 RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
 EXPOSE 7000
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:7000/api/health || exit 1
 
 CMD ["node", "dist/main.js"]

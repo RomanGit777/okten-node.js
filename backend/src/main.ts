@@ -11,7 +11,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Mount router at root - routes like /pizzas, /users, /auth work directly
 app.use("/", apiRouter);
+
+// Error handling middleware - MUST come after route handlers
 app.use(
     "*",
     (err: ApiError, req: Request, res: Response, next: NextFunction) => {
@@ -20,10 +23,12 @@ app.use(
         res.status(status).json({ status, message });
     },
 );
+
 process.on("uncaughtException", (err) => {
     console.error("Uncaught Exception", err);
     process.exit(1);
 });
+
 const dbConnection = async () => {
     let dbCon = false;
     while (!dbCon) {
