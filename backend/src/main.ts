@@ -1,5 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import path from "node:path";
+
+import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 
@@ -10,10 +13,21 @@ import { apiRouter } from "./routers/api.router.js";
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Or for dev, allow all:
+// app.use(cors());
 
-// Mount router at root - routes like /pizzas, /users, /auth work directly
+app.use(
+    cors({
+        origin: [
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "http://127.0.0.1:3000",
+        ],
+    }),
+);
+app.use("/media", express.static(path.join(process.cwd(), "upload")));
+
 app.use("/", apiRouter);
-
 // Error handling middleware - MUST come after route handlers
 app.use(
     "*",

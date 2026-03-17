@@ -14,7 +14,9 @@
     "jsonwebtoken": "^9.0.3",
     "bcrypt": "^6.0.0",
     "nodemailer": "^8.0.1",
-    "handlebars": "^4.7.8"
+    "handlebars": "^4.7.8",
+    "multer": "^2.1.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "typescript": "^5.8.2",
@@ -34,7 +36,11 @@
     "@eslint/js": "^9.22.0",
     "tsx": "^4.19.3",
     "@types/nodemailer": "^6.4.23",
-    "@types/handlebars": "^4.1.0"
+    "@types/handlebars": "^4.1.0",
+    "dotenv": "^17.3.1",
+    "cors": "^2.8.6",
+    "@types/cors": "^2.8.19",
+    "@types/multer": "^2.1.0"
   },
   "author": "",
   "license": "ISC",
