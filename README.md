@@ -9,21 +9,12 @@ So far we did make it possible for users
 8. Now user can log in, create all pizzas and add new one
 9. Users can upload avatars, and it works with any frontend
 
-L9:
+hw9:
+зробити так щоб користувач міг завантажувати аватарку тільки собі, не вказуючи id в урлі і розвантажити контроллер, використовуючи сервіс
 
-1. create new docker-compose-dev.yml
-   change mongouri
-   add devDep dotenv in backend
+1. delete logs from controller, delete check for user (we already have it in service), move check for req.file to 
+   common middleware (create new method isFileExists)
 
-2. npm start in frontend
+2. change router for upload avatar, move id, add check for token, check for file
 
-3. add multer, multer.config.ts
-
-4. add avatar to user model
-
-5. add new route in user router, controller
-
-6. create upload directory
-
-7. add new route in main.ts 
-   add changes to user model
+3. delete logs from multer, add typing, add Express rd in globals Eslint
