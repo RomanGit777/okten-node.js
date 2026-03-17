@@ -25,14 +25,14 @@ class EmailService {
         context: Record<string, any>,
     ): Promise<string> {
         const layoutSource = await fs.readFile(
-            path.join(process.cwd(), "templates", "base.hbs"),
+            path.join(process.cwd(), "src", "templates", "base.hbs"),
             "utf-8",
         );
 
         const layoutTemplate = handlebars.compile(layoutSource);
 
         const templateSource = await fs.readFile(
-            path.join(process.cwd(), "templates", `${templateName}.hbs`),
+            path.join(process.cwd(), "src", "templates", `${templateName}.hbs`),
             "utf-8",
         );
 
