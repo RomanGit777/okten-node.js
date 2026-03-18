@@ -8,27 +8,16 @@ So far we did make it possible for users
 7. Integrated frontend
 8. Now user can log in, create all pizzas and add new one
 9. Users can upload avatars, and it works with any frontend
-10. Frontend can get paginated lists of user, inc. totalPages, page, prev, next
+10. Frontend can get paginated lists of user, inc. totalPages, page, prev, next, and can be sorted desc,asc
+11. Pizzas can be found by diameter,price,name, response also contains pagination logic
 
-L10:
-1. user.interface: add IUserQuery (pageSize: n, page: n, search?: s, order?: s)
-
-2. enums: create user-query-order.enum
-
-3. user.validator: add new method query
-
-4. common middleware: add new method query,
-   add it to getAll (user.router) to validate query
-
-5. create IPaginatedResponse<T>
-
-6. user.repository, service, controller: add changes to getAll method 
+Hw10:
 
 Flow:
-Server get request. It validates query's using commonMiddleware, then call controller.
+Server get request, call controller.
 controller takes query's and pass it to the service,
 service takes query's and pass it to repository,
-repository works with query's, match, sort, group data and return it to service,
-service takes array with data and extract from there data into 
-variables (data, totalItems), calculate total pages, make logic for buttons, return everything to the controller, 
-controller takes it parse it to json and give response to frontend
+repository works with query's, add limit,skip,sort return it to the service,
+service takes array with data and extract from there data, calculate total pages, make logic for buttons, return 
+everything to the controller, 
+controller takes it parse to json and give response to frontend

@@ -8,8 +8,8 @@ import {
 import { User } from "../models/user.model.js";
 
 class UserRepository {
-    public getAll(query: IUserQuery): Promise<any> {
-        // const skip = query.pageSize * (query.page - 1);
+    public getAll(query: IUserQuery): Promise<[IUser[], number]> {
+        const skip = query.pageSize * (query.page - 1);
         //filter to select only not deleted users
         const filterObject: FilterQuery<IUser> = { isDeleted: false };
 
@@ -21,34 +21,12 @@ class UserRepository {
                 { surname: { $regex: query.search, $options: "i" } },
             ];
         }
-        //if no order is requested mongoDB will ignore $sort
-        const orderObject = {};
-        if (query.order) {
-            if (query.order.startsWith("-")) {
-                orderObject[query.order.slice(1)] = -1; //means slice "-" from search. if search is "-age", it becomes
-                // "age", so sort will know by what field sort data
-            } else {
-                orderObject[query.order] = 1;
-            }
-        }
-        // User.find(filterObject).limit(query.pageSize).skip(skip);
-        return User.aggregate([
-            {
-                $match: filterObject, //match only not deleted users
-            },
-            {
-                $sort: orderObject, //sort by asc,desc, if it is
-            },
-            {
-                $group: {
-                    _id: null, //groups all documents into one group
-                    totalItems: { $sum: 1 }, //it counts each document
-                    data: { $push: "$$ROOT" }, //it pushes each document to data array
-                },
-            },
-            {
-                $project: { _id: 0 },
-            },
+        return Promise.all([
+            User.find(filterObject)
+                .limit(query.pageSize)
+                .skip(skip)
+                .sort(query.order),
+            User.find(filterObject).countDocuments(),
         ]);
     }
 

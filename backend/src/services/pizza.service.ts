@@ -1,9 +1,26 @@
-import { IPizza, IPizzaCreateDTO } from "../interfaces/pizza.interface.js";
+import { IPaginatedResponse } from "../interfaces/paginated.response";
+import {
+    IPizza,
+    IPizzaCreateDTO,
+    IPizzaQuery,
+} from "../interfaces/pizza.interface.js";
 import { pizzaRepository } from "../repositories/pizza.repository.js";
 
 class PizzaService {
-    public getAll(): Promise<IPizza[]> {
-        return pizzaRepository.getAll();
+    public async getAll(
+        query: IPizzaQuery,
+    ): Promise<IPaginatedResponse<IPizza>> {
+        const [data, totalItems] = await pizzaRepository.getAll(query);
+
+        const totalPages = Math.ceil(totalItems / query.pageSize);
+
+        return {
+            totalItems,
+            totalPages,
+            prevPage: !!(query.page - 1),
+            nextPage: query.page + 1 <= totalPages,
+            data,
+        };
     }
 
     public create(pizza: IPizzaCreateDTO): Promise<IPizza> {

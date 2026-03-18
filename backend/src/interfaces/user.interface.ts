@@ -1,5 +1,6 @@
 import { RoleEnum } from "../enums/role.enums.js";
 import { IBase } from "./base.interface.js";
+import { IBaseQuery } from "./base.query.interface";
 
 interface IUser extends IBase {
     // represents DB document, responses to user
@@ -16,11 +17,8 @@ interface IUser extends IBase {
     age: number;
 }
 
-interface IUserQuery {
-    pageSize: number;
-    page: number;
+interface IUserQuery extends IBaseQuery {
     search?: string;
-    order?: string;
 }
 
 type IUserCreateDTO = Pick<
