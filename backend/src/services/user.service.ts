@@ -1,11 +1,34 @@
 import { StatusCodesEnum } from "../enums/status-codes.enums.js";
 import { ApiError } from "../errors/api.error.js";
-import { IUser, IUserCreateDTO } from "../interfaces/user.interface.js";
+import { IPaginatedResponse } from "../interfaces/paginated.response";
+import {
+    IUser,
+    IUserCreateDTO,
+    IUserQuery,
+} from "../interfaces/user.interface.js";
 import { userRepository } from "../repositories/user.repository.js";
 
 class UserService {
-    public getAll(): Promise<IUser[]> {
-        return userRepository.getAll();
+    public async getAll(query: IUserQuery): Promise<IPaginatedResponse<IUser>> {
+        const dataFromDb = await userRepository.getAll(query);
+        let data, totalItems;
+        if (dataFromDb.length) {
+            data = dataFromDb[0].data; // take the first array from res. take from there data
+            totalItems = dataFromDb[0].totalItems;
+        } else {
+            data = [];
+            totalItems = 0;
+        }
+
+        const totalPages = Math.ceil(totalItems / query.pageSize);
+
+        return {
+            totalItems,
+            totalPages,
+            prevPage: !!(query.page - 1),
+            nextPage: query.page + 1 <= totalPages,
+            data,
+        };
     }
 
     public create(user: IUserCreateDTO): Promise<IUser> {

@@ -8,13 +8,27 @@ So far we did make it possible for users
 7. Integrated frontend
 8. Now user can log in, create all pizzas and add new one
 9. Users can upload avatars, and it works with any frontend
+10. Frontend can get paginated lists of user, inc. totalPages, page, prev, next
 
-hw9:
-зробити так щоб користувач міг завантажувати аватарку тільки собі, не вказуючи id в урлі і розвантажити контроллер, використовуючи сервіс
+L10:
+1. user.interface: add IUserQuery (pageSize: n, page: n, search?: s, order?: s)
 
-1. delete logs from controller, delete check for user (we already have it in service), move check for req.file to 
-   common middleware (create new method isFileExists)
+2. enums: create user-query-order.enum
 
-2. change router for upload avatar, move id, add check for token, check for file
+3. user.validator: add new method query
 
-3. delete logs from multer, add typing, add Express rd in globals Eslint
+4. common middleware: add new method query,
+   add it to getAll (user.router) to validate query
+
+5. create IPaginatedResponse<T>
+
+6. user.repository, service, controller: add changes to getAll method 
+
+Flow:
+Server get request. It validates query's using commonMiddleware, then call controller.
+controller takes query's and pass it to the service,
+service takes query's and pass it to repository,
+repository works with query's, match, sort, group data and return it to service,
+service takes array with data and extract from there data into 
+variables (data, totalItems), calculate total pages, make logic for buttons, return everything to the controller, 
+controller takes it parse it to json and give response to frontend

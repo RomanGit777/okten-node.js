@@ -16,6 +16,13 @@ interface IUser extends IBase {
     age: number;
 }
 
+interface IUserQuery {
+    pageSize: number;
+    page: number;
+    search?: string;
+    order?: string;
+}
+
 type IUserCreateDTO = Pick<
     IUser,
     "email" | "password" | "name" | "surname" | "age"
@@ -23,4 +30,4 @@ type IUserCreateDTO = Pick<
 
 type IUserUpdateDTO = Pick<IUser, "name" | "surname" | "age">;
 
-export type { IUser, IUserCreateDTO, IUserUpdateDTO };
+export type { IUser, IUserCreateDTO, IUserQuery, IUserUpdateDTO };

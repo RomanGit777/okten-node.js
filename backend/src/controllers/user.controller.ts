@@ -3,13 +3,14 @@ import { NextFunction, Request, Response } from "express";
 import { StatusCodesEnum } from "../enums/status-codes.enums.js";
 import { ApiError } from "../errors/api.error.js";
 import { ITokenPayload } from "../interfaces/token.interface.js";
-import { IUserUpdateDTO } from "../interfaces/user.interface.js";
+import { IUserQuery, IUserUpdateDTO } from "../interfaces/user.interface.js";
 import { userService } from "../services/user.service.js";
 
 class UsersController {
     public async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            const data = await userService.getAll();
+            const query = req.query as any as IUserQuery;
+            const data = await userService.getAll(query);
             res.status(StatusCodesEnum.OK).json(data);
         } catch (e) {
             next(e);

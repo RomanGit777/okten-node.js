@@ -8,7 +8,11 @@ import { UserValidator } from "../validator/user.validator.js";
 
 const router = Router();
 
-router.get("/", usersController.getAll);
+router.get(
+    "/",
+    commonMiddleware.query(UserValidator.query),
+    usersController.getAll,
+);
 
 router.get(
     "/:id",
