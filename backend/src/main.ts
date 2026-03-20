@@ -7,6 +7,7 @@ import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 
 import { config } from "./configs/config.js";
+import { cronRunner } from "./crons";
 import { ApiError } from "./errors/api.error.js";
 import { apiRouter } from "./routers/api.router.js";
 
@@ -61,8 +62,9 @@ const dbConnection = async () => {
 const start = async () => {
     try {
         await dbConnection();
-        app.listen(config.PORT, () => {
+        app.listen(config.PORT, async () => {
             console.log(`Server listening on port ${config.PORT}`);
+            await cronRunner();
         });
     } catch (e) {
         console.log("Error", e.message);

@@ -11,13 +11,23 @@ So far we did make it possible for users
 10. Frontend can get paginated lists of user, inc. totalPages, page, prev, next, and can be sorted desc,asc
 11. Pizzas can be found by diameter,price,name, response also contains pagination logic
 
-Hw10:
+L11:
+
+1. add crons dependencies
+
+2. create crons directory in backend src, index.ts, add cronRunner func
+
+3. main.ts: make start app listen async, await cronRunnet
+
+4. create (test.cron.ts) (remove-old-tokens.cron.ts)
+
+5. add dayjs dependencies
+
+6. create helpers, time.helper.ts
 
 Flow:
-Server get request, call controller.
-controller takes query's and pass it to the service,
-service takes query's and pass it to repository,
-repository works with query's, add limit,skip,sort return it to the service,
-service takes array with data and extract from there data, calculate total pages, make logic for buttons, return 
-everything to the controller, 
-controller takes it parse to json and give response to frontend
+We're using cron and dayjs dependencies.
+Cron starts when the file is imported
+Cron runs automatically on its schedule
+Logic is defined in remove-old-tokens.ts
+Time calculations are done in time.helper.ts
