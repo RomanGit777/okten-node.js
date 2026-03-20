@@ -11,19 +11,16 @@ So far we did make it possible for users
 10. Frontend can get paginated lists of user, inc. totalPages, page, prev, next, and can be sorted desc,asc
 11. Pizzas can be found by diameter,price,name, response also contains pagination logic
 
-L11:
+hw11:
 
-1. add crons dependencies
+1. email.enum: add spam
 
-2. create crons directory in backend src, index.ts, add cronRunner func
+2. email.constants: add spam
 
-3. main.ts: make start app listen async, await cronRunnet
+3. templates: add spam.hbs
 
-4. create (test.cron.ts) (remove-old-tokens.cron.ts)
+4. crons: add new spam.cron
 
-5. add dayjs dependencies
-
-6. create helpers, time.helper.ts
 
 Flow:
 We're using cron and dayjs dependencies.
