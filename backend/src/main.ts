@@ -7,6 +7,7 @@ import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 
 import { config } from "./configs/config.js";
+import { swaggerDocument, swaggerUI } from "./configs/swagger.config";
 import { cronRunner } from "./crons";
 import { ApiError } from "./errors/api.error.js";
 import { apiRouter } from "./routers/api.router.js";
@@ -16,6 +17,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Or for dev, allow all:
 // app.use(cors());
+
+app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.use(
     cors({

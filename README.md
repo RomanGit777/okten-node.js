@@ -10,21 +10,19 @@ So far we did make it possible for users
 9. Users can upload avatars, and it works with any frontend
 10. Frontend can get paginated lists of user, inc. totalPages, page, prev, next, and can be sorted desc,asc
 11. Pizzas can be found by diameter,price,name, response also contains pagination logic
+12. We can send spam messages to everybody who's registered in our application
+13. Developers can check swagger documentation to see how (requests, responses) work
 
-hw11:
+L12:
 
-1. email.enum: add spam
+1. install dependencies: swagger-ui-express, devDep: types/swagger-ui-express, openapi-types.
 
-2. email.constants: add spam
+2. configs : create swagger.config.ts
 
-3. templates: add spam.hbs
-
-4. crons: add new spam.cron
+3. main.ts : add swagger to main.ts
 
 
 Flow:
-We're using cron and dayjs dependencies.
-Cron starts when the file is imported
-Cron runs automatically on its schedule
-Logic is defined in remove-old-tokens.ts
-Time calculations are done in time.helper.ts
+We're install swagger & openapi dependencies
+Write swagger document
+Connect it to the express in main.ts
